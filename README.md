@@ -1,20 +1,76 @@
 <div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+
+# 📖 Bíblia da Noiva  
+### Sanctum Digital
+
+Preparando a Noiva para a volta do Noivo  
+Estudo bíblico profundo • Escatologia • Devocional profético
+
 </div>
 
-# Run and deploy your AI Studio app
+---
 
-This contains everything you need to run your app locally.
+## ✨ Visão do Projeto
 
-View your app in AI Studio: https://ai.studio/apps/drive/1Xsu2ZQZeOX-DWDkOjhqwmoXfFMy9wf5N
+*Bíblia da Noiva* é uma plataforma cristã digital criada para o estudo profundo das Escrituras, com foco em *escatologia bíblica, **tipologia profética* e *preparação espiritual da Igreja* para a volta de Jesus Cristo.
 
-## Run Locally
+Este projeto une:
+- Fidelidade total ao texto bíblico
+- Profundidade teológica
+- Clareza didática
+- Experiência espiritual reverente
+- Tecnologia moderna
 
-**Prerequisites:**  Node.js
+> “Eis que o Noivo vem; saí-lhe ao encontro.” (Mateus 25:6)
 
+---
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## 📚 Estrutura do App
+
+O aplicativo possui *duas Bíblias integradas*:
+
+### 📖 Bíblia Tradicional
+- Texto bíblico canônico
+- Múltiplas versões
+- Leitura offline
+- Comparação entre traduções
+- Sem comentários misturados ao texto
+
+### 📜 Bíblia da Noiva (Temática Profética)
+- Organização por temas proféticos
+- Conexão entre livros, épocas e autores
+- Lei, Profetas, Evangelhos, Epístolas e Apocalipse
+- Aplicação prática para a Igreja hoje
+
+---
+
+## 🧭 Módulos Principais
+
+- 📖 Bíblia Tradicional  
+- 📜 Bíblia da Noiva  
+- 🕯️ Devocionais Proféticos  
+- 📘 Enciclopédia Escatológica (Volumes 1–300)  
+- 📚 Glossário Escatológico Interativo  
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+- *React + Vite*
+- *TypeScript*
+- *Node.js*
+- *Google Gemini (IA)*
+- Arquitetura modular e escalável
+- Boas práticas de versionamento (Git / GitHub)
+
+---
+
+## ▶️ Executar o Projeto Localmente
+
+### Pré-requisitos
+- Node.js instalado
+
+### Passos
+
+```bash
+npm install
