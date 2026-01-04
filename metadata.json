@@ -1,0 +1,7 @@
+{
+  "name": "Bíblia da Noiva",
+  "description": "Uma plataforma teológica e escatológica avançada para a preparação da Igreja (Noiva) para a volta de Cristo.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
