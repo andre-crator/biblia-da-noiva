@@ -6,7 +6,8 @@ export enum AppView {
   GLOSSARY = 'glossary',
   CHAT = 'chat',
   BIBLE = 'bible',
-  THEMATIC_BIBLE = 'thematic_bible'
+  THEMATIC_BIBLE = 'thematic_bible',
+  DEVOTIONAL_READER = 'devotional_reader'
 }
 
 export interface BibleStudy {
@@ -23,9 +24,18 @@ export interface BibleStudy {
   qrCodeLink: string;
 }
 
+export interface PuzzleConnection {
+  originText: string;
+  originRef: string;
+  destinyText: string;
+  destinyRef: string;
+  revelationKey: string;
+}
+
 export interface ThematicChapter {
   title: string;
   centralDeclaration: string;
+  puzzleConnections: PuzzleConnection[];
   sections: {
     era: 'Antigo Testamento' | 'Evangelhos' | 'Igreja Primitiva' | 'Revelação Final (Apocalipse)';
     verses: string;
@@ -40,4 +50,18 @@ export interface BibleContent {
   book: string;
   chapter: number;
   verses: { number: number; text: string }[];
+}
+
+export interface DevotionalPlan {
+  id: string;
+  title: string;
+  description: string;
+  totalDays: number;
+  category: string;
+  active: boolean;
+}
+
+export interface DevotionalDayContent extends BibleStudy {
+  day: number;
+  planTitle: string;
 }
