@@ -5,7 +5,8 @@ export enum AppView {
   DEVOTIONAL = 'devotional',
   GLOSSARY = 'glossary',
   CHAT = 'chat',
-  STUDY = 'study'
+  BIBLE = 'bible',
+  THEMATIC_BIBLE = 'thematic_bible'
 }
 
 export interface BibleStudy {
@@ -22,19 +23,21 @@ export interface BibleStudy {
   qrCodeLink: string;
 }
 
-export interface GlossaryTerm {
-  term: string;
-  definition: string;
-  bibleBase: string;
-  propheticApplication: string;
-  icon: string;
+export interface ThematicChapter {
+  title: string;
+  centralDeclaration: string;
+  sections: {
+    era: 'Antigo Testamento' | 'Evangelhos' | 'Igreja Primitiva' | 'Revelação Final (Apocalipse)';
+    verses: string;
+    context: string;
+  }[];
+  timeline: string;
+  convergence: string;
+  application: string;
 }
 
-export interface Devotional {
-  day: number;
-  title: string;
-  scripture: string;
-  reflection: string;
-  action: string;
-  completed: boolean;
+export interface BibleContent {
+  book: string;
+  chapter: number;
+  verses: { number: number; text: string }[];
 }

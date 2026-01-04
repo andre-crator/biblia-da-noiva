@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Home, BookOpen, Heart, MessageSquare, Book, Menu, Bell } from 'lucide-react';
+import { Home, BookOpen, Heart, MessageSquare, Book, BookMarked, Layers, Menu, Bell } from 'lucide-react';
 import { AppView } from '../types';
 
 interface LayoutProps {
@@ -12,6 +12,8 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children, activeView, setView }) => {
   const navItems = [
     { id: AppView.DASHBOARD, label: 'Início', icon: Home },
+    { id: AppView.BIBLE, label: 'Bíblia Sagrada', icon: BookMarked },
+    { id: AppView.THEMATIC_BIBLE, label: 'Bíblia Temática', icon: Layers },
     { id: AppView.ENCYCLOPEDIA, label: 'Enciclopédia', icon: BookOpen },
     { id: AppView.DEVOTIONAL, label: 'Devocional', icon: Heart },
     { id: AppView.GLOSSARY, label: 'Glossário', icon: Book },
@@ -20,13 +22,12 @@ const Layout: React.FC<LayoutProps> = ({ children, activeView, setView }) => {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-slate-950 text-slate-100">
-      {/* Sidebar - Desktop */}
       <aside className="hidden md:flex flex-col w-64 border-r border-slate-800 bg-slate-900 sticky top-0 h-screen">
         <div className="p-6 border-b border-slate-800">
           <h1 className="font-cinzel text-2xl gold-gradient font-bold tracking-wider">BÍBLIA DA NOIVA</h1>
           <p className="text-xs text-amber-500 mt-1 uppercase tracking-tighter opacity-70">Até que Ele venha</p>
         </div>
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           {navItems.map((item) => (
             <button
               key={item.id}
@@ -37,26 +38,25 @@ const Layout: React.FC<LayoutProps> = ({ children, activeView, setView }) => {
                   : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100'
               }`}
             >
-              <item.icon size={20} />
-              <span className="font-medium">{item.label}</span>
+              <item.icon size={18} />
+              <span className="font-medium text-sm">{item.label}</span>
             </button>
           ))}
         </nav>
-        <div className="p-4 border-t border-slate-800 text-xs text-slate-500 text-center">
-          Versão 1.0.0 Alpha • Prophetic Intelligence
+        <div className="p-4 border-t border-slate-800 text-[10px] text-slate-500 text-center uppercase tracking-widest">
+          Prophetic Intelligence System
         </div>
       </aside>
 
-      {/* Mobile Nav */}
       <div className="md:hidden flex items-center justify-between p-4 bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
         <h1 className="font-cinzel text-xl gold-gradient font-bold">BÍBLIA DA NOIVA</h1>
-        <button className="p-2 text-slate-400 hover:text-white">
+        <button className="p-2 text-slate-400">
           <Menu />
         </button>
       </div>
 
-      <main className="flex-1 relative pb-24 md:pb-0">
-        <header className="hidden md:flex items-center justify-end p-4 border-b border-slate-800 bg-slate-900/50 backdrop-blur-md">
+      <main className="flex-1 relative pb-24 md:pb-0 overflow-y-auto h-screen">
+        <header className="hidden md:flex items-center justify-end p-4 border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-40">
           <div className="flex items-center gap-4">
             <button className="relative p-2 text-slate-400 hover:text-white">
               <Bell size={20} />
@@ -67,25 +67,22 @@ const Layout: React.FC<LayoutProps> = ({ children, activeView, setView }) => {
             </div>
           </div>
         </header>
-        <div className="p-6 max-w-5xl mx-auto">
+        <div className="p-4 md:p-8 max-w-6xl mx-auto">
           {children}
         </div>
-
-        {/* Floating Chat Trigger (Mobile only shortcut maybe) */}
       </main>
 
-      {/* Bottom Nav - Mobile */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900/90 backdrop-blur-xl border-t border-slate-800 flex justify-around p-3 z-50">
-        {navItems.map((item) => (
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900/90 backdrop-blur-xl border-t border-slate-800 flex justify-around p-2 z-50">
+        {navItems.slice(0, 5).map((item) => (
           <button
             key={item.id}
             onClick={() => setView(item.id)}
-            className={`flex flex-col items-center gap-1 transition-all ${
+            className={`flex flex-col items-center gap-1 p-2 ${
               activeView === item.id ? 'text-amber-500' : 'text-slate-500'
             }`}
           >
-            <item.icon size={20} />
-            <span className="text-[10px] font-medium">{item.label}</span>
+            <item.icon size={18} />
+            <span className="text-[9px] font-medium uppercase tracking-tighter">{item.label}</span>
           </button>
         ))}
       </nav>

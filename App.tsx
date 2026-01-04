@@ -5,6 +5,8 @@ import Home from './pages/Home';
 import Encyclopedia from './pages/Encyclopedia';
 import GlossaryPage from './pages/GlossaryPage';
 import ChatPage from './pages/ChatPage';
+import BibleReader from './pages/BibleReader';
+import ThematicBible from './pages/ThematicBible';
 import { AppView } from './types';
 
 const App: React.FC = () => {
@@ -14,6 +16,10 @@ const App: React.FC = () => {
     switch (activeView) {
       case AppView.DASHBOARD:
         return <Home onNavigate={setActiveView} />;
+      case AppView.BIBLE:
+        return <BibleReader />;
+      case AppView.THEMATIC_BIBLE:
+        return <ThematicBible />;
       case AppView.ENCYCLOPEDIA:
         return <Encyclopedia />;
       case AppView.GLOSSARY:
@@ -43,7 +49,7 @@ const App: React.FC = () => {
                  </div>
                ))}
             </div>
-            <p className="text-sm text-amber-600 font-bold animate-pulse">Disponível na próxima atualização ministerial.</p>
+            <p className="text-sm text-amber-600 font-bold animate-pulse mt-8">Disponível na próxima atualização ministerial.</p>
           </div>
         );
       default:

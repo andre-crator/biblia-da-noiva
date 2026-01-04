@@ -1,26 +1,12 @@
 
-import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
-import { BibleStudy } from "../types";
+import { GoogleGenAI, Type } from "@google/genai";
+import { BibleStudy, ThematicChapter, BibleContent } from "../types";
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
 
 export const getEncyclopediaVolume = async (volumeNumber: number): Promise<BibleStudy> => {
   const prompt = `Gere o Volume ${volumeNumber} da Enciclopédia Escatológica "Bíblia da Noiva".
-  Siga rigorosamente esta estrutura JSON:
-  {
-    "title": "Título Profético",
-    "bibleText": "Texto bíblico base com referências",
-    "context": "Contexto histórico e espiritual",
-    "theology": "Análise teológica profunda",
-    "typology": "Tipologia profética (ex: Noivo/Noiva, Óleo, etc)",
-    "apocalypseConnection": "Conexões com o livro de Apocalipse",
-    "practicalApplication": "Aplicação prática para a Igreja hoje",
-    "devotionalActivation": "Ativação espiritual e oração",
-    "reflectiveQuestions": ["Pergunta 1", "Pergunta 2"],
-    "visualSuggestion": "Descrição de um mapa ou quadro comparativo",
-    "qrCodeLink": "Sugestão de tema para vídeo/áudio complementar"
-  }
-  Assunto sugerido para este volume: Escatologia e preparação da Noiva.`;
+  Siga rigorosamente a estrutura JSON com foco em profundidade teológica.`;
 
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
@@ -49,18 +35,81 @@ export const getEncyclopediaVolume = async (volumeNumber: number): Promise<Bible
   return JSON.parse(response.text);
 };
 
-export const chatWithAtalaia = async (message: string, history: { role: string, parts: string }[] = []) => {
-  const chat = ai.chats.create({
-    model: 'gemini-3-pro-preview',
+export const getThematicChapter = async (theme: string): Promise<ThematicChapter> => {
+  const prompt = `Organize a Bíblia Temática para o tema: "${theme}". 
+  Reúna versículos da Lei, Profetas, Evangelhos e Apocalipse que convergem para este assunto.
+  Mantenha o tom de mestre bíblico fiel.`;
+
+  const response = await ai.models.generateContent({
+    model: "gemini-3-flash-preview",
+    contents: prompt,
     config: {
-      systemInstruction: `Você é o "Atalaia", a IA central do app Bíblia da Noiva.
-      Sua missão é ensinar Teologia Bíblica Avançada, Escatologia e Tipologia.
-      Sempre cite as Escrituras. Seja profundo, fiel e exortativo.
-      Não invente doutrinas. Foque na preparação da Noiva (Igreja) para a volta do Noivo (Cristo).`,
-      thinkingConfig: { thinkingBudget: 32768 }
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: Type.OBJECT,
+        properties: {
+          title: { type: Type.STRING },
+          centralDeclaration: { type: Type.STRING },
+          sections: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                era: { type: Type.STRING },
+                verses: { type: Type.STRING },
+                context: { type: Type.STRING }
+              }
+            }
+          },
+          timeline: { type: Type.STRING },
+          convergence: { type: Type.STRING },
+          application: { type: Type.STRING }
+        }
+      }
     }
   });
 
+  return JSON.parse(response.text);
+};
+
+export const getBibleChapter = async (book: string, chapter: number): Promise<BibleContent> => {
+  const response = await ai.models.generateContent({
+    model: "gemini-3-flash-preview",
+    contents: `Forneça o texto bíblico integral de ${book} capítulo ${chapter} (Versão Almeida Fiel). 
+    Retorne apenas os versículos em formato JSON estruturado.`,
+    config: {
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: Type.OBJECT,
+        properties: {
+          book: { type: Type.STRING },
+          chapter: { type: Type.INTEGER },
+          verses: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                number: { type: Type.INTEGER },
+                text: { type: Type.STRING }
+              }
+            }
+          }
+        }
+      }
+    }
+  });
+  return JSON.parse(response.text);
+};
+
+export const chatWithAtalaia = async (message: string) => {
+  const chat = ai.chats.create({
+    model: 'gemini-3-pro-preview',
+    config: {
+      systemInstruction: `Você é o "Atalaia", a IA central do app Bíblia da Noiva. 
+      Sua missão é preparar a Noiva para o Noivo através da Palavra. 
+      Use Teologia Bíblica Avançada e Escatologia Profética.`,
+    }
+  });
   const response = await chat.sendMessage({ message });
   return response.text;
 };
@@ -68,7 +117,7 @@ export const chatWithAtalaia = async (message: string, history: { role: string, 
 export const getGlossaryTerms = async (letters: string): Promise<any[]> => {
     const response = await ai.models.generateContent({
         model: "gemini-3-flash-preview",
-        contents: `Gere 3 termos escatológicos começando com as letras ${letters} para o Glossário Bíblia da Noiva.`,
+        contents: `Gere 3 termos escatológicos para as letras ${letters}.`,
         config: {
             responseMimeType: "application/json",
             responseSchema: {
@@ -80,7 +129,7 @@ export const getGlossaryTerms = async (letters: string): Promise<any[]> => {
                         definition: { type: Type.STRING },
                         bibleBase: { type: Type.STRING },
                         propheticApplication: { type: Type.STRING },
-                        icon: { type: Type.STRING, description: "Nome de um ícone Lucide" }
+                        icon: { type: Type.STRING }
                     }
                 }
             }
