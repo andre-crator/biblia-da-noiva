@@ -25,26 +25,20 @@ export interface BibleStudy {
   qrCodeLink: string;
 }
 
-export interface PuzzleConnection {
-  originText: string;
-  originRef: string;
-  destinyText: string;
-  destinyRef: string;
-  revelationKey: string;
+export interface MosaicVerse {
+  book: string;
+  chapter: number;
+  verse: number;
+  text: string;
+  era: 'Sombra (AT)' | 'Realidade (NT)' | 'Revelação Final (Apocalipse)';
+  connectionNote: string;
 }
 
-export interface ThematicChapter {
+export interface PropheticMosaic {
   title: string;
-  centralDeclaration: string;
-  puzzleConnections: PuzzleConnection[];
-  sections: {
-    era: 'Antigo Testamento' | 'Evangelhos' | 'Igreja Primitiva' | 'Revelação Final (Apocalipse)';
-    verses: string;
-    context: string;
-  }[];
-  timeline: string;
-  convergence: string;
-  application: string;
+  mystery: string;
+  chains: MosaicVerse[];
+  conclusion: string;
 }
 
 export interface BibleContent {

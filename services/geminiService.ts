@@ -1,8 +1,7 @@
 
 import { GoogleGenAI, Type, Modality } from "@google/genai";
-import { BibleStudy, ThematicChapter, BibleContent, DevotionalDayContent } from "../types";
+import { BibleStudy, PropheticMosaic, BibleContent, DevotionalDayContent } from "../types";
 
-// Inicialização padrão do SDK
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export interface ChatResponse {
@@ -12,61 +11,53 @@ export interface ChatResponse {
 }
 
 /**
- * Retorna o conteúdo temático unindo passagens bíblicas.
- * Agora utiliza Gemini 3 Flash para maior velocidade e Search Grounding para notícias atuais.
+ * Gera um Mosaico Profético: Versículos de diferentes livros que se completam.
+ * Usa Gemini 3 Pro com Meditação Profunda para garantir a conexão teológica perfeita.
  */
-export const getThematicChapter = async (theme: string): Promise<ThematicChapter> => {
-  const prompt = `Você é o "Mestre do Quebra-Cabeça Profético". Sua tarefa é montar a revelação bíblica sobre o tema: "${theme}".
+export const getPropheticMosaic = async (mysteryTheme: string): Promise<PropheticMosaic> => {
+  const prompt = `Você é o "Escriba Celestial". Sua tarefa é montar um MOSAICO PROFÉTICO sobre o tema: "${mysteryTheme}".
   
-  REGRAS DE MONTAGEM:
-  1. Identifique textos que são "espelhos" um do outro (Ex: Daniel 7 e Apocalipse 13, Gênesis 2 e Apocalipse 21).
-  2. Una a Lei, os Profetas, os Evangelhos e o Apocalipse.
-  3. No campo 'puzzleConnections', você deve criar pares de versículos: um do Antigo Testamento (origin) e seu correspondente revelado no Novo Testamento/Apocalipse (destiny). Explique a "Chave da Revelação" que os une.
-  4. Use o Google Search para verificar se há eventos mundiais RECENTES (notícias, tensões geopolíticas, avanços tecnológicos) que se alinham a este tema profético e inclua na 'convergence'.
+  O que é um Mosaico Profético?
+  É uma sequência de leitura onde os versículos de livros DIFERENTES se completam como se fossem um único texto.
+  Exemplo: Se o tema é "O Cordeiro", você deve unir Êxodo 12 (O Cordeiro da Páscoa), Isaías 53 (O Cordeiro Mudo), João 1 (O Cordeiro de Deus) e Apocalipse 5 (O Cordeiro no Trono).
   
-  Retorne em JSON seguindo rigorosamente o schema.`;
+  REGRAS:
+  1. No campo 'chains', forneça o TEXTO BÍBLICO INTEGRAL de cada versículo chave.
+  2. Cada versículo deve ter uma 'connectionNote' que explica como ele se "encaixa" no anterior para formar a revelação completa.
+  3. A ordem deve ser cronológica da revelação (AT -> NT -> Apocalipse).
+  4. Use traduções tradicionais e solenes (Almeida).
+  
+  Retorne em JSON rigoroso.`;
 
   const response = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
+    model: "gemini-3-pro-preview",
     contents: prompt,
     config: {
-      tools: [{ googleSearch: {} }],
+      thinkingConfig: { thinkingBudget: 32768 },
       responseMimeType: "application/json",
       responseSchema: {
         type: Type.OBJECT,
         properties: {
           title: { type: Type.STRING },
-          centralDeclaration: { type: Type.STRING },
-          puzzleConnections: {
+          mystery: { type: Type.STRING },
+          chains: {
             type: Type.ARRAY,
             items: {
               type: Type.OBJECT,
               properties: {
-                originText: { type: Type.STRING },
-                originRef: { type: Type.STRING },
-                destinyText: { type: Type.STRING },
-                destinyRef: { type: Type.STRING },
-                revelationKey: { type: Type.STRING }
-              },
-              required: ["originText", "originRef", "destinyText", "destinyRef", "revelationKey"]
-            }
-          },
-          sections: {
-            type: Type.ARRAY,
-            items: {
-              type: Type.OBJECT,
-              properties: {
+                book: { type: Type.STRING },
+                chapter: { type: Type.INTEGER },
+                verse: { type: Type.INTEGER },
+                text: { type: Type.STRING },
                 era: { type: Type.STRING },
-                verses: { type: Type.STRING },
-                context: { type: Type.STRING }
-              }
+                connectionNote: { type: Type.STRING }
+              },
+              required: ["book", "chapter", "verse", "text", "era", "connectionNote"]
             }
           },
-          timeline: { type: Type.STRING },
-          convergence: { type: Type.STRING },
-          application: { type: Type.STRING }
+          conclusion: { type: Type.STRING }
         },
-        required: ["title", "centralDeclaration", "puzzleConnections", "sections", "timeline", "convergence", "application"]
+        required: ["title", "mystery", "chains", "conclusion"]
       }
     }
   });
@@ -74,30 +65,6 @@ export const getThematicChapter = async (theme: string): Promise<ThematicChapter
   return JSON.parse(response.text);
 };
 
-/**
- * Gera áudio solene para o devocional usando Gemini 2.5 Flash Preview TTS.
- */
-export const generateDevotionalAudio = async (text: string): Promise<string> => {
-  const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash-preview-tts",
-    contents: [{ parts: [{ text: `Leia com voz solene, inspiradora e pausada, como um mestre bíblico revelando mistérios: ${text}` }] }],
-    config: {
-      responseModalities: [Modality.AUDIO],
-      speechConfig: {
-        voiceConfig: {
-          prebuiltVoiceConfig: { voiceName: 'Charon' },
-        },
-      },
-    },
-  });
-  const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-  if (!base64Audio) throw new Error("Falha ao gerar áudio");
-  return base64Audio;
-};
-
-/**
- * Chat central "Atalaia" usando Gemini 3 Pro com suporte a Thinking Budget.
- */
 export const chatWithAtalaia = async (message: string, useThinking: boolean = false): Promise<ChatResponse> => {
   const isSimpleTask = message.length < 20 && (message.toLowerCase().includes("olá") || message.toLowerCase().includes("bom dia"));
   const model = useThinking ? "gemini-3-pro-preview" : (isSimpleTask ? "gemini-2.5-flash-lite-latest" : "gemini-3-flash-preview");
@@ -105,7 +72,7 @@ export const chatWithAtalaia = async (message: string, useThinking: boolean = fa
   const config: any = {
     systemInstruction: `Você é o "Atalaia", a IA central do app Bíblia da Noiva. 
     Sua missão é prover orientação teológica, escatológica e tipológica avançada. 
-    Use Google Search para eventos mundiais e Google Maps para localizações bíblicas ou tensões geopolíticas em Israel e no Oriente Médio.`,
+    Sempre mostre como um texto bíblico interpreta o outro.`,
     tools: [{ googleSearch: {} }, { googleMaps: {} }],
   };
 
@@ -126,85 +93,8 @@ export const chatWithAtalaia = async (message: string, useThinking: boolean = fa
   };
 };
 
-/**
- * Obtém localizações bíblicas ou pontos geográficos proféticos usando Maps Grounding.
- */
-export const getPropheticMaps = async (locationName: string): Promise<ChatResponse> => {
-  const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
-    contents: `Forneça informações geográficas e links de mapa para o local bíblico ou ponto estratégico: ${locationName}. Explique sua importância na escatologia.`,
-    config: {
-      tools: [{ googleMaps: {} }],
-    }
-  });
-
-  return {
-    text: response.text || "",
-    groundingChunks: response.candidates?.[0]?.groundingMetadata?.groundingChunks
-  };
-};
-
-export const getDevotionalDay = async (planTitle: string, day: number): Promise<DevotionalDayContent> => {
-  const response = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
-    contents: `Gere o conteúdo do Dia ${day} do plano de devocional: "${planTitle}". Siga a estrutura JSON de 11 pontos da Bíblia da Noiva.`,
-    config: {
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: Type.OBJECT,
-        properties: {
-          title: { type: Type.STRING },
-          bibleText: { type: Type.STRING },
-          context: { type: Type.STRING },
-          theology: { type: Type.STRING },
-          typology: { type: Type.STRING },
-          apocalypseConnection: { type: Type.STRING },
-          practicalApplication: { type: Type.STRING },
-          devotionalActivation: { type: Type.STRING },
-          reflectiveQuestions: { type: Type.ARRAY, items: { type: Type.STRING } },
-          visualSuggestion: { type: Type.STRING },
-          qrCodeLink: { type: Type.STRING }
-        },
-        required: ["title", "bibleText", "context", "theology", "typology", "apocalypseConnection", "practicalApplication", "devotionalActivation", "reflectiveQuestions", "visualSuggestion", "qrCodeLink"]
-      }
-    }
-  });
-  return { ...JSON.parse(response.text), day, planTitle };
-};
-
-export const getEncyclopediaVolume = async (volumeNumber: number): Promise<BibleStudy> => {
-  const response = await ai.models.generateContent({
-    model: "gemini-3-pro-preview",
-    contents: `Gere o Volume ${volumeNumber} da Enciclopédia Escatológica.`,
-    config: {
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: Type.OBJECT,
-        properties: {
-          title: { type: Type.STRING },
-          bibleText: { type: Type.STRING },
-          context: { type: Type.STRING },
-          theology: { type: Type.STRING },
-          typology: { type: Type.STRING },
-          apocalypseConnection: { type: Type.STRING },
-          practicalApplication: { type: Type.STRING },
-          devotionalActivation: { type: Type.STRING },
-          reflectiveQuestions: { type: Type.ARRAY, items: { type: Type.STRING } },
-          visualSuggestion: { type: Type.STRING },
-          qrCodeLink: { type: Type.STRING },
-        },
-        required: ["title", "bibleText", "context", "theology", "typology", "apocalypseConnection", "practicalApplication", "devotionalActivation", "reflectiveQuestions", "visualSuggestion", "qrCodeLink"]
-      }
-    }
-  });
-  return JSON.parse(response.text);
-};
-
 export const getBibleChapter = async (book: string, chapter: number): Promise<BibleContent> => {
-  const prompt = `Forneça o texto bíblico integral de ${book} capítulo ${chapter}. 
-  Use uma tradução fiel e consagrada em português (como Almeida Revista e Atualizada ou NVI). 
-  Retorne TODOS os versículos do capítulo no formato JSON especificado.`;
-  
+  const prompt = `Forneça o texto bíblico integral de ${book} capítulo ${chapter}. Use Almeida Revista e Atualizada. Retorne JSON.`;
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
     contents: prompt,
@@ -215,16 +105,7 @@ export const getBibleChapter = async (book: string, chapter: number): Promise<Bi
         properties: {
           book: { type: Type.STRING },
           chapter: { type: Type.INTEGER },
-          verses: { 
-            type: Type.ARRAY, 
-            items: { 
-              type: Type.OBJECT, 
-              properties: { 
-                number: { type: Type.INTEGER }, 
-                text: { type: Type.STRING } 
-              } 
-            } 
-          }
+          verses: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { number: { type: Type.INTEGER }, text: { type: Type.STRING } } } }
         },
         required: ["book", "chapter", "verses"]
       }
@@ -233,27 +114,61 @@ export const getBibleChapter = async (book: string, chapter: number): Promise<Bi
   return JSON.parse(response.text);
 };
 
+export const generateDevotionalAudio = async (text: string): Promise<string> => {
+  const response = await ai.models.generateContent({
+    model: "gemini-2.5-flash-preview-tts",
+    contents: [{ parts: [{ text: `Leia com voz solene: ${text}` }] }],
+    config: {
+      responseModalities: [Modality.AUDIO],
+      speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Charon' } } },
+    },
+  });
+  return response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data || "";
+};
+
+export const getEncyclopediaVolume = async (volumeNumber: number): Promise<BibleStudy> => {
+  const response = await ai.models.generateContent({
+    model: "gemini-3-pro-preview",
+    contents: `Volume ${volumeNumber} da Enciclopédia Escatológica em JSON.`,
+    config: {
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: Type.OBJECT,
+        properties: {
+          title: { type: Type.STRING }, bibleText: { type: Type.STRING }, context: { type: Type.STRING },
+          theology: { type: Type.STRING }, typology: { type: Type.STRING }, apocalypseConnection: { type: Type.STRING },
+          practicalApplication: { type: Type.STRING }, devotionalActivation: { type: Type.STRING },
+          reflectiveQuestions: { type: Type.ARRAY, items: { type: Type.STRING } }, visualSuggestion: { type: Type.STRING }, qrCodeLink: { type: Type.STRING }
+        }
+      }
+    }
+  });
+  return JSON.parse(response.text);
+};
+
+export const getDevotionalDay = async (planTitle: string, day: number): Promise<DevotionalDayContent> => {
+  const response = await ai.models.generateContent({
+    model: "gemini-3-flash-preview",
+    contents: `Dia ${day} de ${planTitle} em JSON.`,
+    config: { responseMimeType: "application/json" }
+  });
+  return { ...JSON.parse(response.text), day, planTitle };
+};
+
 export const getGlossaryTerms = async (letters: string): Promise<any[]> => {
     const response = await ai.models.generateContent({
         model: "gemini-3-flash-preview",
-        contents: `Gere 3 termos proféticos para ${letters} em JSON.`,
-        config: {
-            responseMimeType: "application/json",
-            responseSchema: {
-                type: Type.ARRAY,
-                items: {
-                    type: Type.OBJECT,
-                    properties: {
-                        term: { type: Type.STRING },
-                        definition: { type: Type.STRING },
-                        bibleBase: { type: Type.STRING },
-                        propheticApplication: { type: Type.STRING },
-                        icon: { type: Type.STRING }
-                    },
-                    required: ["term", "definition", "bibleBase", "propheticApplication", "icon"]
-                }
-            }
-        }
+        contents: `Termos proféticos para ${letters} em JSON.`,
+        config: { responseMimeType: "application/json" }
     });
     return JSON.parse(response.text);
 }
+
+export const getPropheticMaps = async (location: string): Promise<any> => {
+  const response = await ai.models.generateContent({
+    model: "gemini-2.5-flash",
+    contents: `Geografia escatológica de ${location}.`,
+    config: { tools: [{ googleMaps: {} }] }
+  });
+  return { text: response.text, groundingChunks: response.candidates?.[0]?.groundingMetadata?.groundingChunks };
+};
