@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { getDevotionalDay, generateDevotionalAudio } from '../services/geminiService';
+// Fixed: Using generateNarration instead of the non-existent generateDevotionalAudio
+import { getDevotionalDay, generateNarration } from '../services/geminiService';
 import { DevotionalDayContent, DevotionalPlan } from '../types';
 import { Loader2, ChevronLeft, QrCode, Sparkles, Book, CheckCircle, Share2, Play, Square, Volume2 } from 'lucide-react';
 import { decodeBase64, decodeAudioData } from '../utils/audioUtils';
@@ -58,7 +59,8 @@ const DevotionalReader: React.FC<DevotionalReaderProps> = ({ plan, onBack }) => 
 
     setAudioLoading(true);
     try {
-      const base64 = await generateDevotionalAudio(`${content.theology}. Aplicação prática: ${content.practicalApplication}`);
+      // Fixed: calling generateNarration as defined in geminiService
+      const base64 = await generateNarration(`${content.theology}. Aplicação prática: ${content.practicalApplication}`);
       
       if (!audioContextRef.current) {
         audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });

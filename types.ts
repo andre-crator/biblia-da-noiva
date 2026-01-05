@@ -11,6 +11,32 @@ export enum AppView {
   SETTINGS = 'settings'
 }
 
+export interface MosaicVerse {
+  book: string;
+  chapter: number;
+  verse: number;
+  text: string;
+  era: 'Sombra (AT)' | 'Realidade (NT)' | 'Revelação Final (Apocalipse)';
+  connectionNote: string;
+  dateRange: string;
+  historicalContext: string;
+  geopoliticalAnalysis: string;
+  spiritualMystery: string;
+  currentRelevance: string;
+  locationMarker: string;
+  // Prompts para geração de mídia
+  imagePrompt: string;
+  videoPrompt: string;
+  narrationScript: string;
+}
+
+export interface PropheticMosaic {
+  title: string;
+  mystery: string;
+  chains: MosaicVerse[];
+  conclusion: string;
+}
+
 export interface BibleStudy {
   title: string;
   bibleText: string;
@@ -23,29 +49,6 @@ export interface BibleStudy {
   reflectiveQuestions: string[];
   visualSuggestion: string;
   qrCodeLink: string;
-}
-
-export interface MosaicVerse {
-  book: string;
-  chapter: number;
-  verse: number;
-  text: string;
-  era: 'Sombra (AT)' | 'Realidade (NT)' | 'Revelação Final (Apocalipse)';
-  connectionNote: string;
-  // Novas camadas de profundidade
-  dateRange?: string;
-  historicalContext?: string;
-  geopoliticalAnalysis?: string;
-  spiritualMystery?: string;
-  currentRelevance?: string;
-  locationMarker?: string;
-}
-
-export interface PropheticMosaic {
-  title: string;
-  mystery: string;
-  chains: MosaicVerse[];
-  conclusion: string;
 }
 
 export interface BibleContent {
