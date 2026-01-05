@@ -12,20 +12,20 @@ export interface ChatResponse {
 
 /**
  * Gera um Mosaico Profético: Versículos de diferentes livros que se completam.
- * Usa Gemini 3 Pro com Meditação Profunda para garantir a conexão teológica perfeita.
+ * O foco agora é NARRATIVA CONTÍNUA.
  */
 export const getPropheticMosaic = async (mysteryTheme: string): Promise<PropheticMosaic> => {
-  const prompt = `Você é o "Escriba Celestial". Sua tarefa é montar um MOSAICO PROFÉTICO sobre o tema: "${mysteryTheme}".
+  const prompt = `Você é o "Mestre do Cânon Unificado". Sua tarefa é reorganizar as Escrituras sobre o tema: "${mysteryTheme}".
   
-  O que é um Mosaico Profético?
-  É uma sequência de leitura onde os versículos de livros DIFERENTES se completam como se fossem um único texto.
-  Exemplo: Se o tema é "O Cordeiro", você deve unir Êxodo 12 (O Cordeiro da Páscoa), Isaías 53 (O Cordeiro Mudo), João 1 (O Cordeiro de Deus) e Apocalipse 5 (O Cordeiro no Trono).
+  O leitor quer ler um fluxo CONTÍNUO de texto, onde os livros se dobram uns sobre os outros.
+  Exemplo: Se o tema é "As Festas de Israel", você deve unir Levítico 23 com João 7 e Apocalipse 7.
   
-  REGRAS:
-  1. No campo 'chains', forneça o TEXTO BÍBLICO INTEGRAL de cada versículo chave.
-  2. Cada versículo deve ter uma 'connectionNote' que explica como ele se "encaixa" no anterior para formar a revelação completa.
-  3. A ordem deve ser cronológica da revelação (AT -> NT -> Apocalipse).
-  4. Use traduções tradicionais e solenes (Almeida).
+  REGRAS CRÍTICAS:
+  1. Selecione de 4 a 7 versículos-chave que formam uma LINHA DE TEMPO da revelação.
+  2. Forneça o TEXTO INTEGRAL e fiel (Almeida).
+  3. No campo 'connectionNote', explique o "Ponto de Costura": Por que este versículo em particular foi colocado após o anterior? Como eles se interpretam?
+  4. Garanta que a transição entre eras (Sombra -> Realidade -> Revelação) seja clara mas fluida.
+  5. O título deve ser poético e solene.
   
   Retorne em JSON rigoroso.`;
 

@@ -4,28 +4,29 @@ import { getPropheticMosaic } from '../services/geminiService';
 import { PropheticMosaic, MosaicVerse } from '../types';
 import { 
   Loader2, 
-  Layers, 
-  Sparkles, 
-  Puzzle, 
-  Link2, 
+  Scroll, 
+  BookMarked, 
   ChevronRight, 
-  ArrowDown,
-  Quote,
-  Scroll,
+  ChevronLeft,
+  Search,
   Zap,
-  ShieldCheck
+  BookOpen,
+  Hash,
+  ArrowDownCircle,
+  Sparkles
 } from 'lucide-react';
 
 const ThematicBible: React.FC = () => {
   const [mosaic, setMosaic] = useState<PropheticMosaic | null>(null);
   const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const mysteries = [
-    "O Cordeiro: Da Páscoa ao Trono", 
-    "O Tabernáculo: Sombra do Santuário Celestial", 
-    "O Noivo: De Adão às Bodas do Cordeiro", 
-    "As Duas Oliveiras: O Testemunho Profético",
-    "O Rei que Vem: Da Tribo de Judá ao Reino Milenar"
+  const propheticThreads = [
+    { id: "cordeiro", title: "O Cordeiro: Da Páscoa ao Trono", icon: "🐑" },
+    { id: "tabernaculo", title: "O Tabernáculo: Padrão do Céu", icon: "🏛️" },
+    { id: "noivo", title: "O Noivo: De Adão às Bodas", icon: "👑" },
+    { id: "alianca", title: "As Alianças: Do Sinai ao Calvário", icon: "📜" },
+    { id: "oliveiras", title: "As Duas Oliveiras: O Testemunho", icon: "🌿" }
   ];
 
   const fetchMosaic = async (theme: string) => {
@@ -40,47 +41,50 @@ const ThematicBible: React.FC = () => {
     }
   };
 
-  const MosaicPiece: React.FC<{ verse: MosaicVerse; isLast: boolean }> = ({ verse, isLast }) => (
-    <div className="relative group">
-      {/* Visual Connector Line */}
-      {!isLast && (
-        <div className="absolute left-1/2 bottom-[-4rem] -translate-x-1/2 w-px h-16 bg-gradient-to-b from-amber-500/50 via-amber-500/20 to-transparent z-0">
-           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 p-1 bg-amber-600 rounded-full animate-bounce shadow-[0_0_10px_rgba(217,119,6,0.5)]">
-              <ArrowDown size={12} className="text-white" />
+  const VerseFlow: React.FC<{ verse: MosaicVerse; isFirst: boolean }> = ({ verse, isFirst }) => (
+    <div className="relative mb-16 animate-in slide-in-from-bottom-8 duration-700">
+      {/* Book Transition Marker */}
+      <div className="flex items-center gap-4 mb-8">
+        <div className="h-px flex-1 bg-slate-800"></div>
+        <div className="flex items-center gap-2 px-4 py-1.5 bg-slate-900 border border-slate-800 rounded-full">
+           <BookMarked size={14} className="text-amber-500" />
+           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+             {verse.book} {verse.chapter}:{verse.verse}
+           </span>
+        </div>
+        <div className="h-px flex-1 bg-slate-800"></div>
+      </div>
+
+      <div className="flex gap-6 md:gap-10">
+        {/* Margin for Verse Number and Era Icon */}
+        <div className="hidden md:flex flex-col items-center w-12 pt-2">
+           <div className={`w-10 h-10 rounded-xl flex items-center justify-center border text-xs font-black mb-4 ${
+             verse.era.includes('Sombra') ? 'bg-blue-900/10 border-blue-500/30 text-blue-400' :
+             verse.era.includes('Realidade') ? 'bg-indigo-900/10 border-indigo-500/30 text-indigo-400' :
+             'bg-amber-900/10 border-amber-500/30 text-amber-500'
+           }`}>
+              {verse.book.substring(0, 1)}
            </div>
-        </div>
-      )}
-
-      <div className="bg-slate-900/80 backdrop-blur-xl border border-slate-800 rounded-[2.5rem] p-8 md:p-12 shadow-2xl transition-all hover:border-amber-500/40 relative z-10 group-hover:-translate-y-1">
-        {/* Era Tag */}
-        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest mb-6 border ${
-          verse.era.includes('Sombra') 
-          ? 'bg-blue-900/20 border-blue-500/30 text-blue-400' 
-          : verse.era.includes('Realidade') 
-          ? 'bg-indigo-900/20 border-indigo-500/30 text-indigo-400' 
-          : 'bg-amber-900/20 border-amber-500/30 text-amber-500'
-        }`}>
-           <Scroll size={12} /> {verse.era}
+           <div className="w-px flex-1 bg-gradient-to-b from-slate-800 to-transparent"></div>
         </div>
 
-        <div className="space-y-6">
-           <p className="text-2xl md:text-3xl font-serif-biblical italic text-slate-100 leading-relaxed">
-             "{verse.text}"
+        {/* Main Text Area */}
+        <div className="flex-1 space-y-6">
+           <p className="font-serif-biblical text-2xl md:text-3xl text-slate-200 leading-relaxed first-letter:text-5xl first-letter:font-cinzel first-letter:mr-3 first-letter:float-left first-letter:text-amber-500">
+             {verse.text}
            </p>
-           
-           <div className="flex items-center justify-between pt-4 border-t border-slate-800/50">
-              <div className="flex items-center gap-2 text-slate-500 font-bold text-sm">
-                 <Link2 size={16} className="text-amber-600" />
-                 <span>{verse.book} {verse.chapter}:{verse.verse}</span>
-              </div>
-           </div>
 
-           {/* The "Stitch" - Why this verse connects to the mystery */}
-           <div className="mt-6 p-5 bg-slate-950/60 rounded-2xl border border-slate-800/40 border-l-4 border-l-amber-600 italic text-slate-400 text-sm leading-relaxed group-hover:text-slate-300 transition-colors">
-              <div className="flex items-center gap-2 text-[9px] font-black uppercase text-amber-600 tracking-widest mb-2">
-                 <Zap size={10} /> Chave da Revelação
+           {/* Revelation Key - Now integrated as a "Translator Note" */}
+           <div className="relative group">
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-amber-600/30 group-hover:bg-amber-500 transition-all"></div>
+              <div className="pl-6 py-2">
+                 <div className="flex items-center gap-2 text-[9px] font-black uppercase text-amber-600 tracking-widest mb-1 opacity-60 group-hover:opacity-100 transition-opacity">
+                    <Zap size={10} /> Conexão Teológica
+                 </div>
+                 <p className="text-sm text-slate-500 group-hover:text-slate-400 transition-colors italic leading-relaxed">
+                   {verse.connectionNote}
+                 </p>
               </div>
-              {verse.connectionNote}
            </div>
         </div>
       </div>
@@ -88,41 +92,58 @@ const ThematicBible: React.FC = () => {
   );
 
   return (
-    <div className="space-y-12 animate-in fade-in duration-700 pb-32">
-      <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
-        <div className="max-w-xl">
-          <div className="flex items-center gap-3 text-amber-500 mb-3">
-             <Puzzle size={32} />
-             <h1 className="text-4xl md:text-5xl font-cinzel font-bold gold-gradient leading-none">Bíblia de Mosaico</h1>
-          </div>
-          <p className="text-slate-400 text-lg font-serif-biblical italic">
-            "A Bíblia não é uma coleção de livros, é uma única revelação costurada pelo Espírito."
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {mysteries.map(m => (
-            <button 
-              key={m}
-              onClick={() => fetchMosaic(m)}
-              className="px-5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-[10px] font-black uppercase tracking-widest hover:border-amber-500 hover:text-amber-500 transition-all shadow-lg active:scale-95"
-            >
-              {m}
-            </button>
-          ))}
-        </div>
-      </header>
-
+    <div className="max-w-5xl mx-auto pb-32 space-y-12">
+      {/* Prophetic Index Header */}
       {!mosaic && !loading && (
-        <div className="py-32 flex flex-col items-center justify-center text-center space-y-8 bg-slate-900/30 border border-slate-800 border-dashed rounded-[4rem]">
-          <div className="relative">
-             <Puzzle size={100} className="text-slate-800" />
-             <Sparkles size={32} className="text-amber-600 absolute -top-4 -right-4 animate-pulse" />
+        <div className="space-y-10 animate-in fade-in duration-700">
+          <div className="text-center space-y-4">
+             <div className="inline-flex items-center justify-center p-4 bg-amber-600/10 rounded-full border border-amber-600/20 mb-4">
+                <Scroll size={48} className="text-amber-500" />
+             </div>
+             <h1 className="text-5xl md:text-6xl font-cinzel font-bold gold-gradient">Bíblia Temática</h1>
+             <p className="text-slate-400 text-lg md:text-xl font-serif-biblical italic max-w-2xl mx-auto">
+               "A reorganização do Cânon Sagrado para que o Mistério de Deus se revele em um único fluxo de leitura."
+             </p>
           </div>
-          <div className="max-w-md space-y-4 px-8">
-            <h2 className="text-2xl font-cinzel font-bold text-white uppercase tracking-widest leading-tight">Escolha um Mistério para Revelar</h2>
-            <p className="text-slate-500 text-sm leading-relaxed italic">
-              Nesta Bíblia, os livros se dobram um sobre o outro para que você leia a profecia e o seu cumprimento em uma única respiração.
-            </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {propheticThreads.map((thread) => (
+              <button
+                key={thread.id}
+                onClick={() => fetchMosaic(thread.title)}
+                className="group p-8 bg-slate-900 border border-slate-800 rounded-[2.5rem] text-left transition-all hover:border-amber-500/40 hover:bg-slate-800/50 hover:-translate-y-1 active:scale-95 shadow-xl"
+              >
+                <div className="text-4xl mb-4 group-hover:scale-110 transition-transform inline-block">
+                  {thread.icon}
+                </div>
+                <h3 className="text-lg font-cinzel font-bold text-white mb-2">{thread.title}</h3>
+                <div className="flex items-center gap-2 text-[10px] font-black text-amber-600 uppercase tracking-widest opacity-60 group-hover:opacity-100">
+                  Abrir Fluxo <ChevronRight size={14} />
+                </div>
+              </button>
+            ))}
+          </div>
+
+          <div className="bg-slate-900/40 border border-slate-800 border-dashed rounded-[3rem] p-12 text-center space-y-6">
+             <Search size={32} className="mx-auto text-slate-700" />
+             <div className="space-y-2">
+                <h4 className="text-slate-400 font-bold uppercase tracking-widest text-xs">Busca por Mistério Específico</h4>
+                <div className="relative max-w-md mx-auto">
+                   <input 
+                     type="text" 
+                     placeholder="Ex: As Festas de Israel, O Tabernáculo..." 
+                     value={searchTerm}
+                     onChange={(e) => setSearchTerm(e.target.value)}
+                     className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-6 py-4 text-sm text-slate-200 outline-none focus:border-amber-500/50"
+                   />
+                   <button 
+                    onClick={() => fetchMosaic(searchTerm)}
+                    className="absolute right-2 top-2 bottom-2 bg-amber-600 hover:bg-amber-500 text-white px-4 rounded-xl transition-colors"
+                   >
+                     <ChevronRight size={18} />
+                   </button>
+                </div>
+             </div>
           </div>
         </div>
       )}
@@ -130,68 +151,90 @@ const ThematicBible: React.FC = () => {
       {loading && (
         <div className="flex flex-col items-center justify-center py-48 gap-8">
           <div className="relative">
-             <Loader2 size={64} className="text-amber-600 animate-spin" />
-             <Puzzle size={24} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white animate-pulse" />
+             <Loader2 size={64} className="text-amber-500 animate-spin opacity-20" />
+             <div className="absolute inset-0 flex items-center justify-center">
+                <Sparkles size={32} className="text-amber-600 animate-pulse" />
+             </div>
           </div>
           <div className="text-center space-y-2">
-             <p className="text-slate-300 font-cinzel text-xl tracking-widest animate-pulse uppercase">Costurando a Revelação...</p>
-             <p className="text-[10px] text-slate-500 uppercase font-black tracking-[0.4em]">O Gemini Pro está meditando sobre as Escrituras</p>
+             <p className="text-slate-400 font-cinzel text-xl tracking-widest uppercase">Costurando as Escrituras...</p>
+             <p className="text-[10px] text-slate-600 uppercase font-black tracking-[0.4em]">A Bíblia está se interpretando...</p>
           </div>
         </div>
       )}
 
       {mosaic && !loading && (
-        <article className="space-y-20 max-w-4xl mx-auto animate-in slide-in-from-bottom-12 duration-1000">
-          {/* Mystery Intro Card */}
-          <section className="bg-gradient-to-br from-slate-900 via-amber-950/10 to-slate-950 border border-slate-800 rounded-[3rem] p-12 md:p-20 text-center shadow-[0_0_60px_rgba(0,0,0,0.6)] relative overflow-hidden">
-             <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
-                <Scroll size={400} />
+        <article className="animate-in fade-in duration-1000">
+          {/* Navigation/Back Button */}
+          <div className="flex items-center justify-between mb-12">
+             <button 
+              onClick={() => setMosaic(null)}
+              className="flex items-center gap-2 text-slate-500 hover:text-amber-500 transition-colors font-bold uppercase text-[10px] tracking-widest"
+             >
+                <ChevronLeft size={16} /> Voltar ao Índice do Cânon
+             </button>
+             <div className="flex items-center gap-2 px-3 py-1 bg-amber-600/10 border border-amber-600/20 rounded-full text-amber-500 text-[10px] font-black uppercase tracking-widest">
+                <Hash size={12} /> Fluxo Ativo
              </div>
-             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent"></div>
-             
-             <div className="flex items-center justify-center gap-2 text-amber-500 mb-6 font-black text-xs uppercase tracking-[0.5em]">
-                <Quote size={16} fill="currentColor" /> Mosaico Profético
-             </div>
-             
-             <h2 className="text-4xl md:text-6xl font-cinzel font-bold mb-8 tracking-tight gold-gradient leading-tight">
-                {mosaic.title}
-             </h2>
-             
-             <p className="text-xl md:text-2xl font-serif-biblical italic text-slate-300 leading-relaxed">
-                "{mosaic.mystery}"
-             </p>
-          </section>
+          </div>
 
-          {/* Verses Chain */}
-          <section className="space-y-24">
-             {mosaic.chains.map((v, idx) => (
-               <MosaicPiece 
-                 key={idx} 
-                 verse={v} 
-                 isLast={idx === mosaic.chains.length - 1} 
-               />
-             ))}
-          </section>
+          {/* Mosaic Reading Area */}
+          <div className="bg-slate-900 border border-slate-800 rounded-[3rem] p-8 md:p-20 shadow-2xl relative overflow-hidden min-h-[80vh]">
+            {/* Background Texture */}
+            <div className="absolute inset-0 opacity-[0.02] pointer-events-none">
+               <div className="absolute top-0 right-0 p-12 text-[400px] font-cinzel font-bold rotate-12">Noiva</div>
+            </div>
 
-          {/* Conclusion */}
-          <footer className="mt-32 pt-16 border-t border-slate-800">
-             <div className="bg-amber-600 rounded-[3rem] p-10 md:p-16 text-white shadow-2xl relative overflow-hidden group">
-                <div className="absolute -right-20 -bottom-20 opacity-10 group-hover:scale-110 transition-transform duration-1000">
-                   <ShieldCheck size={300} />
-                </div>
-                <h3 className="text-xs font-black uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
-                   <Sparkles size={16} /> Revelação Final
-                </h3>
-                <p className="text-2xl md:text-3xl font-serif-biblical italic leading-relaxed relative z-10">
-                   {mosaic.conclusion}
-                </p>
-             </div>
-             <div className="mt-8 text-center">
-                <p className="text-[10px] text-slate-600 font-bold uppercase tracking-[0.4em]">
-                   Até que Ele venha • Bíblia da Noiva 2025
-                </p>
-             </div>
-          </footer>
+            <header className="text-center mb-24 relative">
+               <div className="inline-flex items-center gap-2 mb-6 text-amber-500">
+                  <BookOpen size={20} />
+                  <span className="text-[10px] font-black uppercase tracking-[0.4em]">Leitura Interconectada</span>
+               </div>
+               <h2 className="text-5xl md:text-7xl font-cinzel font-bold gold-gradient mb-8 leading-tight">
+                 {mosaic.title}
+               </h2>
+               <div className="max-w-2xl mx-auto">
+                 <p className="text-xl md:text-2xl font-serif-biblical italic text-slate-400 leading-relaxed border-l-4 border-amber-600/20 pl-6 text-left">
+                   "{mosaic.mystery}"
+                 </p>
+               </div>
+            </header>
+
+            <div className="relative">
+               {/* Vertical Flow Line */}
+               <div className="absolute left-6 md:left-[2.25rem] top-0 bottom-0 w-px bg-gradient-to-b from-amber-600/40 via-slate-800 to-transparent"></div>
+
+               <div className="space-y-4">
+                  {mosaic.chains.map((verse, idx) => (
+                    <VerseFlow 
+                      key={idx} 
+                      verse={verse} 
+                      isFirst={idx === 0} 
+                    />
+                  ))}
+               </div>
+            </div>
+
+            <footer className="mt-32 pt-20 border-t border-slate-800/60 text-center">
+               <div className="max-w-2xl mx-auto space-y-8">
+                  <div className="flex items-center justify-center gap-3 text-amber-500/50 mb-2">
+                     <ArrowDownCircle size={32} className="animate-bounce" />
+                  </div>
+                  <h3 className="text-xs font-black uppercase tracking-[0.4em] text-slate-500">Conclusão da Revelação</h3>
+                  <p className="text-2xl md:text-3xl font-serif-biblical italic text-slate-300 leading-relaxed">
+                    {mosaic.conclusion}
+                  </p>
+                  <div className="pt-12">
+                     <button 
+                      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                      className="bg-slate-800 hover:bg-slate-700 text-slate-300 px-8 py-3 rounded-2xl text-xs font-bold uppercase tracking-widest transition-all"
+                     >
+                       Subir para o Início
+                     </button>
+                  </div>
+               </div>
+            </footer>
+          </div>
         </article>
       )}
     </div>
