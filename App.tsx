@@ -9,6 +9,7 @@ import BibleReader from './pages/BibleReader';
 import ThematicBible from './pages/ThematicBible';
 import DevotionalPage from './pages/DevotionalPage';
 import DevotionalReader from './pages/DevotionalReader';
+import SettingsPage from './pages/SettingsPage';
 import GuideModal from './components/GuideModal';
 import { AppView, DevotionalPlan } from './types';
 
@@ -54,6 +55,8 @@ const App: React.FC = () => {
         return <GlossaryPage />;
       case AppView.CHAT:
         return <ChatPage />;
+      case AppView.SETTINGS:
+        return <SettingsPage />;
       case AppView.DEVOTIONAL:
         return <DevotionalPage onSelectPlan={handleSelectPlan} />;
       case AppView.DEVOTIONAL_READER:

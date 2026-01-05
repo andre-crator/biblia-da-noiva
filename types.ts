@@ -7,7 +7,8 @@ export enum AppView {
   CHAT = 'chat',
   BIBLE = 'bible',
   THEMATIC_BIBLE = 'thematic_bible',
-  DEVOTIONAL_READER = 'devotional_reader'
+  DEVOTIONAL_READER = 'devotional_reader',
+  SETTINGS = 'settings'
 }
 
 export interface BibleStudy {

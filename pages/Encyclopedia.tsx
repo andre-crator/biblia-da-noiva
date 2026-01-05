@@ -17,7 +17,8 @@ import {
   ScrollText, 
   Zap, 
   Heart,
-  Star
+  Star,
+  BookMarked
 } from 'lucide-react';
 
 const Encyclopedia: React.FC = () => {
@@ -70,9 +71,9 @@ const Encyclopedia: React.FC = () => {
       <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500 pb-20">
         <button 
           onClick={() => { setSelectedVolume(null); setStudy(null); }}
-          className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
+          className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors group"
         >
-          <ChevronLeft size={20} />
+          <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
           Voltar para Volumes
         </button>
 
@@ -111,7 +112,7 @@ const Encyclopedia: React.FC = () => {
                 {study.title}
               </h1>
               <div className="flex items-center gap-6 text-slate-400 text-xs font-semibold uppercase tracking-wider">
-                 <div className="flex items-center gap-2"><Book size={14} className="text-amber-600" /> Bíblia da Noiva</div>
+                 <div className="flex items-center gap-2"><BookMarked size={14} className="text-amber-600" /> Bíblia da Noiva</div>
                  <div className="flex items-center gap-2"><Calendar size={14} className="text-amber-600" /> Profetic Insight</div>
               </div>
             </div>
@@ -226,45 +227,64 @@ const Encyclopedia: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className="text-4xl font-cinzel font-bold gold-gradient mb-2">Enciclopédia Escatológica</h1>
-          <p className="text-slate-400">Volumes 1 a 300 de revelação bíblica profunda.</p>
+          <p className="text-slate-400">Volumes de revelação profunda para o despertamento da Igreja.</p>
         </div>
         <div className="flex gap-2">
           <input 
             type="number" 
-            placeholder="Ir para volume..." 
-            className="bg-slate-900 border border-slate-800 rounded-lg px-4 py-2 text-sm focus:border-amber-500 outline-none w-32"
+            placeholder="Volume..." 
+            className="bg-slate-900 border border-slate-800 rounded-lg px-4 py-2 text-sm focus:border-amber-500 outline-none w-28 shadow-inner"
           />
-          <button className="bg-amber-600 px-4 py-2 rounded-lg font-bold text-sm hover:bg-amber-500 transition-colors shadow-lg shadow-amber-900/20">Acessar</button>
+          <button className="bg-amber-600 px-5 py-2 rounded-lg font-bold text-sm hover:bg-amber-500 transition-colors shadow-lg shadow-amber-900/20 active:scale-95">Acessar</button>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
         {Array.from({ length: 20 }, (_, i) => i + 1).map((vol) => (
           <button
             key={vol}
             onClick={() => fetchVolume(vol)}
-            className={`aspect-square flex flex-col items-center justify-center gap-3 border rounded-2xl transition-all group relative overflow-hidden ${
+            className={`aspect-square flex flex-col items-center justify-center gap-4 border rounded-[2.5rem] transition-all duration-500 group relative overflow-hidden transform hover:scale-[1.05] hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)] ${
               vol === 1 
-                ? 'bg-amber-950/20 border-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.1)]' 
-                : 'bg-slate-900 border-slate-800 hover:border-amber-500/50 hover:bg-slate-800/50'
+                ? 'bg-gradient-to-br from-amber-900/40 via-slate-900 to-slate-950 border-amber-500/50 shadow-[0_0_40px_rgba(245,158,11,0.2)]' 
+                : 'bg-gradient-to-br from-slate-900 via-slate-950 to-black border-slate-800 hover:border-amber-500/40'
             }`}
           >
             {vol === 1 && (
-              <div className="absolute top-2 right-2 text-amber-500">
-                <Star size={14} fill="currentColor" className="animate-pulse" />
+              <div className="absolute top-5 right-5 text-amber-500 z-20">
+                <Star size={18} fill="currentColor" className="animate-pulse drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]" />
               </div>
             )}
-            <div className="absolute inset-0 bg-gradient-to-br from-amber-600/0 to-amber-600/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            <span className={`text-[9px] font-bold uppercase tracking-[0.2em] transition-colors ${
-              vol === 1 ? 'text-amber-500' : 'text-slate-500 group-hover:text-amber-500/70'
+            
+            {/* Ancient Book Icon - Proeminente */}
+            <div className={`p-5 rounded-2xl transition-all duration-500 transform group-hover:scale-110 group-hover:rotate-3 shadow-2xl ${
+              vol === 1 
+                ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' 
+                : 'bg-slate-800/80 text-slate-500 border border-slate-700/50 group-hover:bg-amber-600/15 group-hover:text-amber-500 group-hover:border-amber-500/30'
             }`}>
-              Volume
-            </span>
-            <span className={`text-2xl font-cinzel font-bold transition-colors ${
-              vol === 1 ? 'text-white' : 'text-slate-300 group-hover:text-white'
-            }`}>
-              {vol}
-            </span>
+               <Book size={52} strokeWidth={1.2} />
+            </div>
+
+            <div className="text-center relative z-10 space-y-0">
+              <span className={`text-[9px] font-black uppercase tracking-[0.5em] block transition-colors mb-1 ${
+                vol === 1 ? 'text-amber-500' : 'text-slate-600 group-hover:text-amber-500/70'
+              }`}>
+                Volume
+              </span>
+              <span className={`text-4xl font-cinzel font-bold transition-all duration-300 drop-shadow-lg ${
+                vol === 1 ? 'text-white' : 'text-slate-400 group-hover:text-white'
+              }`}>
+                {vol}
+              </span>
+            </div>
+
+            {/* Gradient Overlay for Depth */}
+            <div className={`absolute inset-0 bg-gradient-to-t transition-opacity duration-500 opacity-0 group-hover:opacity-100 pointer-events-none ${
+                vol === 1 ? 'from-amber-600/15 to-transparent' : 'from-slate-800/30 to-transparent'
+            }`}></div>
+            
+            {/* Reflection Shine */}
+            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
           </button>
         ))}
       </div>

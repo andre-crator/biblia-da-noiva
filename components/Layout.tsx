@@ -1,6 +1,18 @@
 
 import React from 'react';
-import { Home, BookOpen, Heart, MessageSquare, Book, BookMarked, Layers, Menu, Bell, HelpCircle } from 'lucide-react';
+import { 
+  Home, 
+  BookOpen, 
+  Heart, 
+  MessageSquare, 
+  Book, 
+  BookMarked, 
+  Layers, 
+  Menu, 
+  Bell, 
+  HelpCircle,
+  Settings
+} from 'lucide-react';
 import { AppView } from '../types';
 
 interface LayoutProps {
@@ -19,6 +31,7 @@ const Layout: React.FC<LayoutProps> = ({ children, activeView, setView, onOpenGu
     { id: AppView.DEVOTIONAL, label: 'Devocional', icon: Heart },
     { id: AppView.GLOSSARY, label: 'Glossário', icon: Book },
     { id: AppView.CHAT, label: 'Atalaia AI', icon: MessageSquare },
+    { id: AppView.SETTINGS, label: 'Configurações', icon: Settings },
   ];
 
   return (
@@ -80,8 +93,8 @@ const Layout: React.FC<LayoutProps> = ({ children, activeView, setView, onOpenGu
           <button onClick={onOpenGuide} className="p-2 text-amber-500">
             <HelpCircle size={22} />
           </button>
-          <button className="p-2 text-slate-400">
-            <Bell size={20} />
+          <button className="p-2 text-slate-400" onClick={() => setView(AppView.SETTINGS)}>
+            <Settings size={22} />
           </button>
           <button className="p-2 text-slate-400">
             <Menu size={24} />
@@ -102,7 +115,10 @@ const Layout: React.FC<LayoutProps> = ({ children, activeView, setView, onOpenGu
               <Bell size={22} />
               <span className="absolute top-2 right-2 w-2 h-2 bg-amber-500 rounded-full border-2 border-slate-950"></span>
             </button>
-            <div className="flex items-center gap-3 pl-4 border-l border-slate-800">
+            <div 
+              className="flex items-center gap-3 pl-4 border-l border-slate-800 cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={() => setView(AppView.SETTINGS)}
+            >
               <div className="text-right">
                 <p className="text-xs font-bold text-slate-200 uppercase tracking-tighter leading-none">Usuário</p>
                 <p className="text-[9px] font-medium text-amber-500/70 uppercase tracking-widest mt-1">Nível Vigilante</p>
@@ -121,7 +137,7 @@ const Layout: React.FC<LayoutProps> = ({ children, activeView, setView, onOpenGu
 
       {/* Bottom Nav - Mobile */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-2xl border-t border-slate-800/80 flex justify-around p-1.5 z-50">
-        {navItems.slice(0, 5).map((item) => {
+        {navItems.filter(item => item.id !== AppView.SETTINGS).slice(0, 5).map((item) => {
           const isActive = activeView === item.id;
           return (
             <button
