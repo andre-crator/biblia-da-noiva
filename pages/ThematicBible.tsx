@@ -15,7 +15,9 @@ import {
   ArrowDownCircle,
   Sparkles,
   Clock,
-  Shield
+  Shield,
+  Plus,
+  Megaphone
 } from 'lucide-react';
 
 const ThematicBible: React.FC = () => {
@@ -44,6 +46,13 @@ const ThematicBible: React.FC = () => {
     }
   };
 
+  const getEraIcon = (era: string) => {
+    if (era.includes('Sombra')) return <Scroll size={16} />;
+    if (era.includes('Realidade')) return <Plus size={18} />; // Representando a Cruz
+    if (era.includes('Revelação')) return <Megaphone size={16} />; // Representando a Trombeta
+    return <Sparkles size={16} />;
+  };
+
   const VerseFlow: React.FC<{ verse: MosaicVerse; isFirst: boolean }> = ({ verse, isFirst }) => (
     <div className="relative mb-16 animate-in slide-in-from-bottom-8 duration-700">
       {/* Book Transition Marker */}
@@ -60,15 +69,25 @@ const ThematicBible: React.FC = () => {
 
       <div className="flex gap-6 md:gap-10">
         {/* Margin for Verse Number and Era Icon */}
-        <div className="hidden md:flex flex-col items-center w-12 pt-2">
-           <div className={`w-10 h-10 rounded-xl flex items-center justify-center border text-xs font-black mb-4 transition-all duration-500 ${
+        <div className="hidden md:flex flex-col items-center w-12 pt-2 gap-3">
+           <div className={`w-10 h-10 rounded-xl flex items-center justify-center border text-xs font-black transition-all duration-500 ${
              verse.era.includes('Sombra') ? 'bg-blue-900/10 border-blue-500/30 text-blue-400' :
              verse.era.includes('Realidade') ? 'bg-indigo-900/10 border-indigo-500/30 text-indigo-400' :
              'bg-amber-900/10 border-amber-500/30 text-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.2)]'
            }`}>
               {verse.book.substring(0, 1)}
            </div>
-           <div className="w-px flex-1 bg-gradient-to-b from-slate-800 to-transparent"></div>
+           
+           {/* Era Icon Symbol */}
+           <div className={`p-2.5 rounded-full border transition-all duration-500 ${
+             verse.era.includes('Sombra') ? 'text-blue-500/60 border-blue-900/30 bg-blue-950/20' :
+             verse.era.includes('Realidade') ? 'text-indigo-500/60 border-indigo-900/30 bg-indigo-950/20' :
+             'text-amber-500 border-amber-900/30 bg-amber-950/30'
+           }`}>
+              {getEraIcon(verse.era)}
+           </div>
+
+           <div className="w-px flex-1 bg-gradient-to-b from-slate-800 to-transparent min-h-[40px]"></div>
         </div>
 
         {/* Main Text Area */}
@@ -83,7 +102,7 @@ const ThematicBible: React.FC = () => {
            <div className="relative group overflow-hidden rounded-2xl bg-slate-950/40 border border-slate-800/40 p-6 transition-all hover:bg-slate-950/60 hover:border-amber-500/30">
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-amber-600/30 group-hover:bg-amber-500 transition-all"></div>
               <div className="flex items-center gap-2 text-[9px] font-black uppercase text-amber-600 tracking-widest mb-3 opacity-60 group-hover:opacity-100 transition-opacity">
-                 <Zap size={10} /> Chave de Unificação Profética
+                 <Zap size={10} /> Chave de Unificação Profética — {verse.era}
               </div>
               <p className="text-sm text-slate-400 group-hover:text-slate-300 transition-colors italic leading-relaxed">
                 {verse.connectionNote}
