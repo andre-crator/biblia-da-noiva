@@ -99,9 +99,7 @@ export const generateDevotionalAudio = async (text: string): Promise<string> => 
  * Chat central "Atalaia" usando Gemini 3 Pro com suporte a Thinking Budget.
  */
 export const chatWithAtalaia = async (message: string, useThinking: boolean = false): Promise<ChatResponse> => {
-  // Se for uma saudação simples ou tarefa rápida, usa Flash Lite para baixa latência.
   const isSimpleTask = message.length < 20 && (message.toLowerCase().includes("olá") || message.toLowerCase().includes("bom dia"));
-  
   const model = useThinking ? "gemini-3-pro-preview" : (isSimpleTask ? "gemini-2.5-flash-lite-latest" : "gemini-3-flash-preview");
   
   const config: any = {
@@ -203,9 +201,13 @@ export const getEncyclopediaVolume = async (volumeNumber: number): Promise<Bible
 };
 
 export const getBibleChapter = async (book: string, chapter: number): Promise<BibleContent> => {
+  const prompt = `Forneça o texto bíblico integral de ${book} capítulo ${chapter}. 
+  Use uma tradução fiel e consagrada em português (como Almeida Revista e Atualizada ou NVI). 
+  Retorne TODOS os versículos do capítulo no formato JSON especificado.`;
+  
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
-    contents: `Texto integral de ${book} ${chapter} em JSON.`,
+    contents: prompt,
     config: {
       responseMimeType: "application/json",
       responseSchema: {
@@ -213,8 +215,18 @@ export const getBibleChapter = async (book: string, chapter: number): Promise<Bi
         properties: {
           book: { type: Type.STRING },
           chapter: { type: Type.INTEGER },
-          verses: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { number: { type: Type.INTEGER }, text: { type: Type.STRING } } } }
-        }
+          verses: { 
+            type: Type.ARRAY, 
+            items: { 
+              type: Type.OBJECT, 
+              properties: { 
+                number: { type: Type.INTEGER }, 
+                text: { type: Type.STRING } 
+              } 
+            } 
+          }
+        },
+        required: ["book", "chapter", "verses"]
       }
     }
   });
