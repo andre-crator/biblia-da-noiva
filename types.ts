@@ -32,6 +32,13 @@ export interface MosaicVerse {
   text: string;
   era: 'Sombra (AT)' | 'Realidade (NT)' | 'Revelação Final (Apocalipse)';
   connectionNote: string;
+  // Novas camadas de profundidade
+  dateRange?: string;
+  historicalContext?: string;
+  geopoliticalAnalysis?: string;
+  spiritualMystery?: string;
+  currentRelevance?: string;
+  locationMarker?: string;
 }
 
 export interface PropheticMosaic {

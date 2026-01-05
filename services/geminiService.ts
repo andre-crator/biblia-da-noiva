@@ -11,22 +11,29 @@ export interface ChatResponse {
 }
 
 /**
- * Gera um Mosaico Profético: Versículos de diferentes livros que se completam.
- * O foco agora é UNIFICAÇÃO CANÔNICA PROFUNDA.
+ * Gera um Mosaico Profético com Profundidade Multidimensional.
  */
 export const getPropheticMosaic = async (mysteryTheme: string): Promise<PropheticMosaic> => {
-  const prompt = `Você é o "Mestre do Cânon Unificado e Escatológico". Sua tarefa é reorganizar as Escrituras sobre o tema ou livro: "${mysteryTheme}".
+  const prompt = `Você é o "CONSELHO SUPERIOR DE ESCATOLOGIA E HISTÓRIA BÍBLICA". 
+  Sua tarefa é dissecar o tema: "${mysteryTheme}" com profundidade acadêmica e espiritual absoluta.
   
-  O leitor quer ler um fluxo CONTÍNUO onde o texto de um profeta (ex: Daniel) se funde com o comentário de Jesus (ex: Mateus 24) e a revelação final (ex: Apocalipse).
+  O foco deve ser o livro de DANIEL e suas conexões canônicas, mas com uma análise que ignore as limitações de uma bíblia de papel.
   
-  REGRAS DE OURO PARA DANIEL E PROFECIA:
-  1. Se o tema envolver DANIEL, você deve obrigatoriamente buscar os versículos correspondentes em Apocalipse, Ezequiel e as palavras de Jesus sobre o "Abominável da Desolação".
-  2. Forneça o TEXTO INTEGRAL e fiel (Almeida Revista e Corrigida ou Atualizada). Não resuma versículos.
-  3. No campo 'connectionNote', explique o "Ponto de Costura Teológico": Por que o texto de João em Apocalipse completa exatamente o que Daniel viu mas não pôde selar? 
-  4. A ordem deve formar uma narrativa de REVELAÇÃO PROGRESSIVA.
-  5. Use uma linguagem solene, acadêmica e profundamente reverente.
+  PARA CADA VERSÍCULO, VOCÊ DEVE FORNECER:
+  1. O TEXTO INTEGRAL (Almeida).
+  2. DATAÇÃO: O ano exato ou período (ex: 605 a.C., 539 a.C.).
+  3. CONTEXTO HISTÓRICO: O que estava acontecendo no mundo secular (ex: Batalha de Carquemis).
+  4. ANÁLISE GEOPOLÍTICA: Quem eram as potências mundiais e como isso se conecta com o sistema político ATUAL.
+  5. MISTÉRIO ESPIRITUAL: A tipologia e o significado oculto dos símbolos.
+  6. RELEVÂNCIA ATUAL: Como essa profecia de Daniel se manifesta HOJE (Tecnologia, Globalismo, Israel).
+  7. LOCALIZAÇÃO: Nome do lugar geográfico para mapeamento mental.
+
+  REGRAS:
+  - Se Daniel citar a Estátua, ligue Daniel 2 com Daniel 7, Daniel 8 e Apocalipse 13 e 17.
+  - Não seja genérico. Traga nomes de reis (Nabucodonosor, Ciro, Antíoco Epifânio).
+  - Use tom solene e revelador.
   
-  Retorne em JSON rigoroso com no mínimo 5 e no máximo 10 versículos "costurados".`;
+  Retorne em JSON rigoroso.`;
 
   const response = await ai.models.generateContent({
     model: "gemini-3-pro-preview",
@@ -49,9 +56,15 @@ export const getPropheticMosaic = async (mysteryTheme: string): Promise<Propheti
                 verse: { type: Type.INTEGER },
                 text: { type: Type.STRING },
                 era: { type: Type.STRING },
-                connectionNote: { type: Type.STRING }
+                connectionNote: { type: Type.STRING },
+                dateRange: { type: Type.STRING },
+                historicalContext: { type: Type.STRING },
+                geopoliticalAnalysis: { type: Type.STRING },
+                spiritualMystery: { type: Type.STRING },
+                currentRelevance: { type: Type.STRING },
+                locationMarker: { type: Type.STRING }
               },
-              required: ["book", "chapter", "verse", "text", "era", "connectionNote"]
+              required: ["book", "chapter", "verse", "text", "era", "connectionNote", "dateRange", "historicalContext", "geopoliticalAnalysis", "spiritualMystery", "currentRelevance", "locationMarker"]
             }
           },
           conclusion: { type: Type.STRING }
@@ -64,6 +77,7 @@ export const getPropheticMosaic = async (mysteryTheme: string): Promise<Propheti
   return JSON.parse(response.text);
 };
 
+// ... restante das funções (chatWithAtalaia, getBibleChapter, etc. permanecem iguais)
 export const chatWithAtalaia = async (message: string, useThinking: boolean = false): Promise<ChatResponse> => {
   const isSimpleTask = message.length < 20 && (message.toLowerCase().includes("olá") || message.toLowerCase().includes("bom dia"));
   const model = useThinking ? "gemini-3-pro-preview" : (isSimpleTask ? "gemini-2.5-flash-lite-latest" : "gemini-3-flash-preview");
