@@ -12,22 +12,21 @@ export interface ChatResponse {
 
 /**
  * Gera um Mosaico Profético: Versículos de diferentes livros que se completam.
- * O foco agora é NARRATIVA CONTÍNUA.
+ * O foco agora é UNIFICAÇÃO CANÔNICA PROFUNDA.
  */
 export const getPropheticMosaic = async (mysteryTheme: string): Promise<PropheticMosaic> => {
-  const prompt = `Você é o "Mestre do Cânon Unificado". Sua tarefa é reorganizar as Escrituras sobre o tema: "${mysteryTheme}".
+  const prompt = `Você é o "Mestre do Cânon Unificado e Escatológico". Sua tarefa é reorganizar as Escrituras sobre o tema ou livro: "${mysteryTheme}".
   
-  O leitor quer ler um fluxo CONTÍNUO de texto, onde os livros se dobram uns sobre os outros.
-  Exemplo: Se o tema é "As Festas de Israel", você deve unir Levítico 23 com João 7 e Apocalipse 7.
+  O leitor quer ler um fluxo CONTÍNUO onde o texto de um profeta (ex: Daniel) se funde com o comentário de Jesus (ex: Mateus 24) e a revelação final (ex: Apocalipse).
   
-  REGRAS CRÍTICAS:
-  1. Selecione de 4 a 7 versículos-chave que formam uma LINHA DE TEMPO da revelação.
-  2. Forneça o TEXTO INTEGRAL e fiel (Almeida).
-  3. No campo 'connectionNote', explique o "Ponto de Costura": Por que este versículo em particular foi colocado após o anterior? Como eles se interpretam?
-  4. Garanta que a transição entre eras (Sombra -> Realidade -> Revelação) seja clara mas fluida.
-  5. O título deve ser poético e solene.
+  REGRAS DE OURO PARA DANIEL E PROFECIA:
+  1. Se o tema envolver DANIEL, você deve obrigatoriamente buscar os versículos correspondentes em Apocalipse, Ezequiel e as palavras de Jesus sobre o "Abominável da Desolação".
+  2. Forneça o TEXTO INTEGRAL e fiel (Almeida Revista e Corrigida ou Atualizada). Não resuma versículos.
+  3. No campo 'connectionNote', explique o "Ponto de Costura Teológico": Por que o texto de João em Apocalipse completa exatamente o que Daniel viu mas não pôde selar? 
+  4. A ordem deve formar uma narrativa de REVELAÇÃO PROGRESSIVA.
+  5. Use uma linguagem solene, acadêmica e profundamente reverente.
   
-  Retorne em JSON rigoroso.`;
+  Retorne em JSON rigoroso com no mínimo 5 e no máximo 10 versículos "costurados".`;
 
   const response = await ai.models.generateContent({
     model: "gemini-3-pro-preview",
