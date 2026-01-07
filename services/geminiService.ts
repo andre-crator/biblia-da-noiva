@@ -2,8 +2,10 @@
 import { GoogleGenAI, Type, Modality } from "@google/genai";
 import { BibleStudy, PropheticMosaic, BibleContent, DevotionalDayContent, MosaicVerse } from "../types";
 
-// Initializing the Gemini client with the system-provided API key
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+/**
+ * Serviço Central de Inteligência Profética (Atalaia)
+ * Utiliza os modelos mais recentes da série Gemini 3 e 2.5
+ */
 
 export interface ChatResponse {
   text: string;
@@ -11,24 +13,44 @@ export interface ChatResponse {
   isThinking?: boolean;
 }
 
+/**
+ * Gera um Mosaico Profético com Profundidade Multidimensional Extrema.
+ * Protocolo de Sala de Guerra: Integra Bíblia, História e Geopolítica Atual.
+ */
 export const getPropheticMosaic = async (mysteryTheme: string): Promise<PropheticMosaic> => {
-  const prompt = `Você é o "CONSELHO SUPERIOR DE ESCATOLOGIA, HISTÓRIA E MÍDIA BÍBLICA". 
-  Disseque o tema: "${mysteryTheme}" com profundidade absoluta para uma plataforma multimídia.
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
-  PARA CADA VERSÍCULO, VOCÊ DEVE FORNECER:
-  1. TEXTO INTEGRAL, DATAÇÃO, CONTEXTO HISTÓRICO, GEOPOLÍTICA (Daniel vs Atualidade) e MISTÉRIO.
-  2. IMAGE_PROMPT: Um prompt altamente detalhado para uma IA de imagem (estilo cinematográfico, épico, 4k) descrevendo a visão (ex: "A estátua de Daniel 2 com cabeça de ouro puro, peito de prata, brilho metálico sob tempestade").
-  3. VIDEO_PROMPT: Uma descrição de cena para o modelo VEO 3.1 (ex: "Câmera lenta focando na pedra atingindo os pés de ferro e barro da estátua").
-  4. NARRATION_SCRIPT: Um pequeno roteiro de 2 frases para ser lido por uma voz solene explicando a conexão profética.
+  const prompt = `Você é o "ATALAIA - SISTEMA DE INTELIGÊNCIA DE DEFESA PROFÉTICA". 
+  Sua missão é realizar uma análise de PROFUNDIDADE MÁXIMA sobre: "${mysteryTheme}".
+  
+  Trate cada versículo como uma "Estação de Inteligência". Você deve fornecer uma cadeia de 3 a 4 versículos chave.
+  
+  PARA CADA VERSÍCULO NA CADEIA, VOCÊ DEVE GERAR OBRIGATORIAMENTE ESTES CAMPOS:
+  1. book: Nome do livro bíblico.
+  2. chapter: Número do capítulo.
+  3. verse: Número do versículo.
+  4. text: Texto bíblico integral (Almeida).
+  5. era: Escolha entre 'Sombra (AT)', 'Realidade (NT)' ou 'Revelação Final (Apocalipse)'.
+  6. connectionNote: Uma nota curta ligando este versículo ao próximo na cadeia profética.
+  7. dateRange: Datação histórica absoluta (ex: 605 a.C.).
+  8. historicalContext: Detalhes arqueológicos e culturais da época.
+  9. geopoliticalAnalysis: Como essa profecia se manifesta na geopolítica de HOJE (ex: BRICS, Moedas Digitais, Conflitos no Oriente Médio).
+  10. spiritualMystery: O código tipológico/espiritual por trás do símbolo.
+  11. currentRelevance: Aplicação prática para a Igreja hoje.
+  12. locationMarker: Coordenadas ou nome geográfico do local da profecia.
+  13. imagePrompt: Prompt CINEMATOGRÁFICO detalhado (8k, IMAX style) para gerar a visão.
+  14. videoPrompt: Prompt para animação (VEO) descrevendo movimento épico.
+  15. narrationScript: Script solene para ser lido por voz de IA.
 
-  Retorne em JSON rigoroso.`;
+  Retorne APENAS o JSON conforme o esquema definido. Não inclua conversas fora do JSON.`;
 
-  // Using gemini-3-pro-preview for complex reasoning tasks with structured output schema
   const response = await ai.models.generateContent({
-    model: "gemini-3-pro-preview",
+    model: "gemini-3-flash-preview",
     contents: prompt,
     config: {
-      thinkingConfig: { thinkingBudget: 32768 },
+      // Configuração recomendada para modelos com thinkingBudget
+      maxOutputTokens: 20000,
+      thinkingConfig: { thinkingBudget: 10000 },
       responseMimeType: "application/json",
       responseSchema: {
         type: Type.OBJECT,
@@ -40,11 +62,21 @@ export const getPropheticMosaic = async (mysteryTheme: string): Promise<Propheti
             items: {
               type: Type.OBJECT,
               properties: {
-                book: { type: Type.STRING }, chapter: { type: Type.INTEGER }, verse: { type: Type.INTEGER },
-                text: { type: Type.STRING }, era: { type: Type.STRING }, connectionNote: { type: Type.STRING },
-                dateRange: { type: Type.STRING }, historicalContext: { type: Type.STRING }, geopoliticalAnalysis: { type: Type.STRING },
-                spiritualMystery: { type: Type.STRING }, currentRelevance: { type: Type.STRING }, locationMarker: { type: Type.STRING },
-                imagePrompt: { type: Type.STRING }, videoPrompt: { type: Type.STRING }, narrationScript: { type: Type.STRING }
+                book: { type: Type.STRING },
+                chapter: { type: Type.INTEGER },
+                verse: { type: Type.INTEGER },
+                text: { type: Type.STRING },
+                era: { type: Type.STRING },
+                connectionNote: { type: Type.STRING },
+                dateRange: { type: Type.STRING },
+                historicalContext: { type: Type.STRING },
+                geopoliticalAnalysis: { type: Type.STRING },
+                spiritualMystery: { type: Type.STRING },
+                currentRelevance: { type: Type.STRING },
+                locationMarker: { type: Type.STRING },
+                imagePrompt: { type: Type.STRING },
+                videoPrompt: { type: Type.STRING },
+                narrationScript: { type: Type.STRING }
               },
               required: ["book", "chapter", "verse", "text", "era", "connectionNote", "dateRange", "historicalContext", "geopoliticalAnalysis", "spiritualMystery", "currentRelevance", "locationMarker", "imagePrompt", "videoPrompt", "narrationScript"]
             }
@@ -56,14 +88,20 @@ export const getPropheticMosaic = async (mysteryTheme: string): Promise<Propheti
     }
   });
 
-  return JSON.parse(response.text);
+  try {
+    const jsonStr = response.text.trim();
+    return JSON.parse(jsonStr);
+  } catch (e) {
+    console.error("Falha ao processar Mosaico Profético:", response.text);
+    throw new Error("Interferência na frequência profética. Tente novamente.");
+  }
 };
 
 export const generatePropheticImage = async (prompt: string): Promise<string> => {
-  // Using gemini-2.5-flash-image for general-purpose image generation tasks
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const response = await ai.models.generateContent({
     model: 'gemini-2.5-flash-image',
-    contents: { parts: [{ text: prompt }] },
+    contents: { parts: [{ text: `Epic cinematic biblical prophecy illustration, ultra-detailed, 8k, dramatic lighting: ${prompt}` }] },
     config: { imageConfig: { aspectRatio: "16:9" } },
   });
   
@@ -74,17 +112,16 @@ export const generatePropheticImage = async (prompt: string): Promise<string> =>
 };
 
 export const generatePropheticVideo = async (prompt: string): Promise<string> => {
-  // Creating fresh client instance for Veo generation to ensure latest credentials
-  const genAI = new GoogleGenAI({ apiKey: process.env.API_KEY });
-  let operation = await genAI.models.generateVideos({
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  let operation = await ai.models.generateVideos({
     model: 'veo-3.1-fast-generate-preview',
-    prompt: prompt,
+    prompt: `Masterpiece cinematic prophecy animation, slow panning: ${prompt}`,
     config: { numberOfVideos: 1, resolution: '720p', aspectRatio: '16:9' }
   });
 
   while (!operation.done) {
-    await new Promise(resolve => setTimeout(resolve, 10000));
-    operation = await genAI.operations.getVideosOperation({ operation: operation });
+    await new Promise(resolve => setTimeout(resolve, 8000));
+    operation = await ai.operations.getVideosOperation({ operation: operation });
   }
 
   const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
@@ -92,7 +129,7 @@ export const generatePropheticVideo = async (prompt: string): Promise<string> =>
 };
 
 export const generateNarration = async (script: string): Promise<string> => {
-  // Utilizing the text-to-speech specific model variant
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash-preview-tts",
     contents: [{ parts: [{ text: script }] }],
@@ -105,23 +142,20 @@ export const generateNarration = async (script: string): Promise<string> => {
 };
 
 export const chatWithAtalaia = async (message: string, useThinking: boolean = false): Promise<ChatResponse> => {
-  const isSimpleTask = message.length < 20 && (message.toLowerCase().includes("olá") || message.toLowerCase().includes("bom dia"));
-  // Selection logic for optimal model usage per task complexity
-  const model = useThinking ? "gemini-3-pro-preview" : (isSimpleTask ? "gemini-flash-lite-latest" : "gemini-3-flash-preview");
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const model = useThinking ? "gemini-3-pro-preview" : "gemini-3-flash-preview";
   const config: any = {
-    systemInstruction: `Você é o "Atalaia", a IA central do app Bíblia da Noiva. 
-    Sua missão é prover orientação teológica, escatológica e tipológica avançada. 
-    Sempre mostre como um texto bíblico interpreta o outro.`,
+    systemInstruction: `Você é o "Atalaia", a IA de Inteligência Escatológica da Bíblia da Noiva. Use grounding global e analise o cenário mundial com base nas Escrituras.`,
     tools: [{ googleSearch: {} }],
   };
-  if (useThinking && model === "gemini-3-pro-preview") { config.thinkingConfig = { thinkingBudget: 32768 }; }
+  if (useThinking) { config.thinkingConfig = { thinkingBudget: 16000 }; }
   const response = await ai.models.generateContent({ model: model, contents: message, config: config });
   return { text: response.text || "...", groundingChunks: response.candidates?.[0]?.groundingMetadata?.groundingChunks, isThinking: useThinking };
 };
 
 export const getBibleChapter = async (book: string, chapter: number): Promise<BibleContent> => {
-  const prompt = `Forneça o texto bíblico integral de ${book} capítulo ${chapter}. Use Almeida Revista e Atualizada. Retorne JSON.`;
-  // Structured schema for Bible content extraction
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const prompt = `Forneça o texto integral de ${book} ${chapter} em JSON estruturado com versículos numerados.`;
   const response = await ai.models.generateContent({ 
     model: "gemini-3-flash-preview", 
     contents: prompt, 
@@ -152,65 +186,30 @@ export const getBibleChapter = async (book: string, chapter: number): Promise<Bi
 };
 
 export const getEncyclopediaVolume = async (volumeNumber: number): Promise<BibleStudy> => {
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const response = await ai.models.generateContent({ 
     model: "gemini-3-pro-preview", 
-    contents: `Volume ${volumeNumber} da Enciclopédia Escatológica em JSON.`, 
-    config: { 
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: Type.OBJECT,
-        properties: {
-          title: { type: Type.STRING },
-          bibleText: { type: Type.STRING },
-          context: { type: Type.STRING },
-          theology: { type: Type.STRING },
-          typology: { type: Type.STRING },
-          apocalypseConnection: { type: Type.STRING },
-          practicalApplication: { type: Type.STRING },
-          devotionalActivation: { type: Type.STRING },
-          reflectiveQuestions: { type: Type.ARRAY, items: { type: Type.STRING } },
-          visualSuggestion: { type: Type.STRING },
-          qrCodeLink: { type: Type.STRING }
-        },
-        required: ["title", "bibleText", "context", "theology", "typology", "apocalypseConnection", "practicalApplication", "devotionalActivation", "reflectiveQuestions", "visualSuggestion", "qrCodeLink"]
-      }
-    } 
+    contents: `Gere o Volume ${volumeNumber} da Enciclopédia Escatológica em JSON profundo.`, 
+    config: { responseMimeType: "application/json" } 
   });
   return JSON.parse(response.text);
 };
 
 export const getDevotionalDay = async (planTitle: string, day: number): Promise<DevotionalDayContent> => {
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const response = await ai.models.generateContent({ 
     model: "gemini-3-flash-preview", 
-    contents: `Dia ${day} de ${planTitle} em JSON.`, 
-    config: { 
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: Type.OBJECT,
-        properties: {
-          title: { type: Type.STRING },
-          bibleText: { type: Type.STRING },
-          context: { type: Type.STRING },
-          theology: { type: Type.STRING },
-          typology: { type: Type.STRING },
-          apocalypseConnection: { type: Type.STRING },
-          practicalApplication: { type: Type.STRING },
-          devotionalActivation: { type: Type.STRING },
-          reflectiveQuestions: { type: Type.ARRAY, items: { type: Type.STRING } },
-          visualSuggestion: { type: Type.STRING },
-          qrCodeLink: { type: Type.STRING }
-        },
-        required: ["title", "bibleText", "context", "theology", "typology", "apocalypseConnection", "practicalApplication", "devotionalActivation", "reflectiveQuestions", "visualSuggestion", "qrCodeLink"]
-      }
-    } 
+    contents: `Gere o Dia ${day} do plano "${planTitle}" em JSON.`, 
+    config: { responseMimeType: "application/json" } 
   });
   return { ...JSON.parse(response.text), day, planTitle };
 };
 
 export const getGlossaryTerms = async (letters: string): Promise<any[]> => {
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({ 
       model: "gemini-3-flash-preview", 
-      contents: `Termos proféticos para ${letters} em JSON.`, 
+      contents: `Gere 3 termos proféticos começando com ${letters} em JSON. Inclua o nome de um ícone da Lucide-react (ex: Flame, Shield, Sun) para cada termo.`, 
       config: { 
         responseMimeType: "application/json",
         responseSchema: {

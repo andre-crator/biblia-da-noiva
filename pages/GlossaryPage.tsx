@@ -159,7 +159,7 @@ const GlossaryPage: React.FC = () => {
                   </p>
                 </div>
 
-                {/* Seção: Base Bíblica */}
+                {/* Seção: Base Bíblica - Com ícone Scroll à esquerda conforme solicitado */}
                 <div className="bg-slate-950/40 rounded-3xl p-6 border-l-4 border-indigo-500 shadow-inner group/section">
                   <div className="flex items-center gap-2 text-indigo-400 font-bold text-[10px] uppercase tracking-[0.2em] mb-3">
                     <Scroll size={14} className="group-hover/section:scale-110 transition-transform" /> Base Bíblica
